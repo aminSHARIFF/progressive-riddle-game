@@ -97,7 +97,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🧩 Progressive Riddle Game</h1>
+        <h1> Progressive Riddle Game</h1>
         <p>Solve 5 riddles • 3 tries each</p>
       </header>
 

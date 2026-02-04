@@ -1,4 +1,4 @@
-// src/data/riddles.js
+
 const riddles = [
   {
     id: 1,
