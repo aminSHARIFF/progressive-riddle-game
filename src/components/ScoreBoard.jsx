@@ -22,16 +22,7 @@ const ScoreBoard = ({ score, currentLevel, totalLevels, hints, recoveryAvailable
         </div>
       </div>
       
-      <div className="progress-container">
-        <div 
-          className="progress-bar" 
-          style={{ width: `${progressPercentage}%` }}
-        >
-          <span className="progress-text">
-            Progress: {Math.round(progressPercentage)}%
-          </span>
-        </div>
-      </div>
+      
       
       <div className="resources">
         <div className="resource-item">
