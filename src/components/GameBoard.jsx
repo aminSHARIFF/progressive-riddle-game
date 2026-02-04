@@ -7,7 +7,7 @@ const GameBoard = ({ riddle, userAnswer, setUserAnswer, feedback, showHint, trie
     }
   }
 
-  // Create tries indicators
+  
   const triesIndicators = Array.from({ length: 3 }, (_, index) => (
     <span 
       key={index}

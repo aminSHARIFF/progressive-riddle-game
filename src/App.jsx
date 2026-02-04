@@ -9,8 +9,8 @@ function App() {
   const [currentLevel, setCurrentLevel] = useState(1)
   const [score, setScore] = useState(100)
   const [gameStatus, setGameStatus] = useState('playing')
-  const [hints, setHints] = useState(1) // Start with 1 hint for testing
-  const [recoveryAvailable, setRecoveryAvailable] = useState(true) // Start with true for testing
+  const [hints, setHints] = useState(1) 
+  const [recoveryAvailable, setRecoveryAvailable] = useState(true) 
   const [userAnswer, setUserAnswer] = useState('')
   const [feedback, setFeedback] = useState('')
   const [showHint, setShowHint] = useState(false)
@@ -44,10 +44,10 @@ function App() {
       setFeedback('Correct! Well done!')
       setScore(prev => prev + 20)
       
-      // Award a hint for correct answer
+     
       setHints(prev => prev + 1)
       
-      // Every 3 correct answers, grant recovery option
+      
       if (currentLevel % 3 === 0) {
         setRecoveryAvailable(true)
       }
@@ -59,12 +59,12 @@ function App() {
         setShowHint(false)
       }, 1500)
     } else {
-      // Wrong answer - decrease tries
+      
       const newTriesLeft = triesLeft - 1
       setTriesLeft(newTriesLeft)
       
       if (newTriesLeft <= 0) {
-        // No tries left - game over
+        
         setGameStatus('lost')
         setFeedback('Game Over! You used all 3 tries!')
       } else {
@@ -92,7 +92,7 @@ function App() {
       setRecoveryAvailable(false)
       setFeedback('Recovery used! +30 points!')
       
-      // Reset tries if player is struggling
+      
       if (triesLeft <= 1) {
         setTriesLeft(3)
         setFeedback('Recovery used! +30 points and tries reset to 3!')
@@ -106,8 +106,8 @@ function App() {
     setCurrentLevel(1)
     setScore(100)
     setGameStatus('playing')
-    setHints(1) // Reset to 1 for testing
-    setRecoveryAvailable(true) // Reset to true for testing
+    setHints(1) 
+    setRecoveryAvailable(true) 
     setUserAnswer('')
     setFeedback('')
     setShowHint(false)

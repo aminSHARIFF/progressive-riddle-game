@@ -1,7 +1,7 @@
 import React from 'react'
 
 const GameControls = ({ onHint, onRecovery, onSubmit, hints, recoveryAvailable, triesLeft }) => {
-  // Handle hint button click
+  
   const handleHint = (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -9,7 +9,7 @@ const GameControls = ({ onHint, onRecovery, onSubmit, hints, recoveryAvailable, 
     onHint()
   }
 
-  // Handle recovery button click
+  
   const handleRecovery = (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -17,7 +17,7 @@ const GameControls = ({ onHint, onRecovery, onSubmit, hints, recoveryAvailable, 
     onRecovery()
   }
 
-  // Handle submit button click
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     e.stopPropagation()
