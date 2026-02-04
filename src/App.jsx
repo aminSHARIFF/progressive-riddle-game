@@ -1,167 +1,189 @@
-import React, { useState, useEffect } from 'react'
-import './App.css'
-import ScoreBoard from './components/ScoreBoard'
-import GameBoard from './components/GameBoard'
-import GameControls from './components/GameControls'
-import { riddles } from './data/riddles'
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import riddles from './data/riddles';
 
 function App() {
-  const [currentLevel, setCurrentLevel] = useState(1)
-  const [score, setScore] = useState(0)
-  const [gameStatus, setGameStatus] = useState('playing')
-  const [hints, setHints] = useState(1)
-  const [recoveryAvailable, setRecoveryAvailable] = useState(true)
-  const [userAnswer, setUserAnswer] = useState('')
-  const [feedback, setFeedback] = useState('')
-  const [showHint, setShowHint] = useState(false)
-  const [triesLeft, setTriesLeft] = useState(3)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [currentRiddleIndex, setCurrentRiddleIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [tries, setTries] = useState(3);
+  const [gameStatus, setGameStatus] = useState('playing'); 
+  const [userAnswer, setUserAnswer] = useState('');
+  const [showHint, setShowHint] = useState(false);
 
-  const currentRiddle = riddles.find(r => r.level === currentLevel)
+  const currentRiddle = riddles[currentRiddleIndex];
 
-  useEffect(() => {
-    setTriesLeft(3)
-  }, [currentLevel])
-
-  const handleAnswerSubmit = () => {
-    if (isSubmitting) return
-    if (gameStatus !== 'playing') return
-    setIsSubmitting(true)
-
-    if (!userAnswer.trim()) {
-      setFeedback('Please enter an answer!')
-      setIsSubmitting(false)
-      return
-    }
-
-    const correctAnswer = currentRiddle.answer.toLowerCase().trim()
-    const userAnswerLower = userAnswer.toLowerCase().trim()
-
-    if (userAnswerLower === correctAnswer) {
-      setFeedback('Correct! Well done!')
-      setScore(prev => prev + 20)
-      setHints(prev => prev + 1)
-
-      if (currentLevel % 3 === 0) {
-        setRecoveryAvailable(true)
-      }
-
-      if (currentLevel === riddles.length) {
-        setTimeout(() => {
-          setGameStatus('won')
-          setIsSubmitting(false)
-        }, 1000)
-        return
-      }
-
-      setTimeout(() => {
-        setCurrentLevel(prev => prev + 1)
-        setUserAnswer('')
-        setFeedback('')
-        setShowHint(false)
-        setIsSubmitting(false)
-      }, 1000)
-
-    } else {
-      const newTriesLeft = triesLeft - 1
-      setTriesLeft(newTriesLeft)
-
-      if (newTriesLeft <= 0) {
-        setGameStatus('lost')
-        setFeedback('Game Over! You used all 3 tries!')
+  const checkAnswer = () => {
+    if (!userAnswer.trim()) return;
+    
+    if (userAnswer.trim().toLowerCase() === currentRiddle.answer.toLowerCase()) {
+     
+      setScore(prev => prev + (tries * 10));
+      
+      if (currentRiddleIndex === riddles.length - 1) {
+        setGameStatus('won');
       } else {
-        setScore(prev => Math.max(0, prev - 10))
-        setFeedback(`Incorrect! ${newTriesLeft} ${newTriesLeft === 1 ? 'try' : 'tries'} remaining.`)
+        setCurrentRiddleIndex(prev => prev + 1);
+        setTries(3);
+        setUserAnswer('');
+        setShowHint(false);
       }
-
-      setIsSubmitting(false)
+    } else {
+      
+      if (tries === 1) {
+        setGameStatus('lost');
+      } else {
+        setTries(prev => prev - 1);
+      }
     }
-  }
+  };
 
-  const handleHint = () => {
-    if (hints > 0) {
-      setShowHint(true)
-      setHints(prev => prev - 1)
+  const useHint = () => {
+    if (!showHint) {
+      setShowHint(true);
     }
-  }
+  };
 
-  const handleRecovery = () => {
-    if (!recoveryAvailable) return
-    setRecoveryAvailable(false)
-    setScore(prev => prev + 30)
-    if (triesLeft <= 1) {
-      setTriesLeft(3)
+  const resetGame = () => {
+    setCurrentRiddleIndex(0);
+    setScore(0);
+    setTries(3);
+    setGameStatus('playing');
+    setUserAnswer('');
+    setShowHint(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      checkAnswer();
     }
-  }
+  };
 
-  const handleReset = () => {
-    setCurrentLevel(1)
-    setScore(0)
-    setGameStatus('playing')
-    setHints(1)
-    setRecoveryAvailable(true)
-    setUserAnswer('')
-    setFeedback('')
-    setShowHint(false)
-    setTriesLeft(3)
-    setIsSubmitting(false)
+  if (gameStatus === 'won') {
+    return (
+      <div className="app">
+        <header className="header">
+          <h1> Game Complete!</h1>
+        </header>
+        <div className="game-container">
+          <div className="results-screen">
+            <h2>Congratulations! </h2>
+            <p className="score-display">Final Score: <span className="score-value">{score}</span></p>
+            <p className="message">You solved all 5 riddles!</p>
+            <button className="reset-btn" onClick={resetGame}>Play Again</button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (gameStatus === 'lost') {
     return (
-      <div className="game-container">
-        <div className="game-over">
-          <h2>Game Over</h2>
-          <p>Final Score: {score}</p>
-          <button onClick={handleReset}>Play Again</button>
+      <div className="app">
+        <header className="header">
+          <h1>Game Over</h1>
+        </header>
+        <div className="game-container">
+          <div className="results-screen">
+            <h2>Out of tries! </h2>
+            <p className="message">The answer was: <strong>{currentRiddle.answer}</strong></p>
+            <p className="score-display">Your Score: <span className="score-value">{score}</span></p>
+            <button className="reset-btn" onClick={resetGame}>Try Again</button>
+          </div>
         </div>
       </div>
-    )
-  }
-
-  if (gameStatus === 'won') {
-    return (
-      <div className="game-container">
-        <div className="game-won">
-          <h2>Congratulations</h2>
-          <p>You solved all riddles!</p>
-          <p>Final Score: {score}</p>
-          <button onClick={handleReset}>Play Again</button>
-        </div>
-      </div>
-    )
+    );
   }
 
   return (
-    <div className="game-container">
-      <ScoreBoard 
-        score={score}
-        currentLevel={currentLevel}
-        totalLevels={riddles.length}
-        hints={hints}
-        recoveryAvailable={recoveryAvailable}
-      />
+    <div className="app">
+      <header className="header">
+        <h1>🧩 Progressive Riddle Game</h1>
+        <p>Solve 5 riddles • 3 tries each</p>
+      </header>
 
-      <GameBoard 
-        riddle={currentRiddle}
-        userAnswer={userAnswer}
-        setUserAnswer={setUserAnswer}
-        feedback={feedback}
-        showHint={showHint}
-        triesLeft={triesLeft}
-        onSubmit={handleAnswerSubmit}
-      />
+      <div className="game-container">
+        <div className="left-panel">
+          <div className="score-card">
+            <div className="score-label">SCORE</div>
+            <div className="score-value">{score}</div>
+          </div>
+          <div className="progress">
+            <div className="progress-label">Riddle {currentRiddleIndex + 1}/5</div>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${((currentRiddleIndex + 1) / 5) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
 
-      <GameControls 
-        onHint={handleHint}
-        onRecovery={handleRecovery}
-        onSubmit={handleAnswerSubmit}
-        hints={hints}
-        recoveryAvailable={recoveryAvailable}
-        triesLeft={triesLeft}
-      />
+        <div className="center-panel">
+          <div className="riddle-card">
+            <div className="difficulty">Difficulty: {currentRiddle.difficulty}</div>
+            <h3 className="riddle-question">{currentRiddle.question}</h3>
+            
+            <div className="input-group">
+              <input
+                type="text"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Type your answer..."
+                className="answer-input"
+              />
+              <button 
+                onClick={checkAnswer}
+                disabled={!userAnswer.trim()}
+                className="submit-btn"
+              >
+                Check Answer
+              </button>
+            </div>
+
+            {showHint && (
+              <div className="hint-box">
+                <span className="hint-icon">💡</span>
+                <p>{currentRiddle.hint}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="right-panel">
+          <div className="tries-card">
+            <div className="tries-label">TRIES LEFT</div>
+            <div className="tries-display">
+              {[1, 2, 3].map((num) => (
+                <div 
+                  key={num} 
+                  className={`try-dot ${num <= tries ? 'active' : 'used'}`}
+                >
+                  {num <= tries ? '✓' : '✗'}
+                </div>
+              ))}
+            </div>
+            <p className="tries-text">{tries} of 3 remaining</p>
+            
+            <button 
+              onClick={useHint}
+              disabled={showHint}
+              className="hint-btn"
+            >
+              {showHint ? 'Hint Used' : 'Get Hint'}
+            </button>
+            
+            <button 
+              onClick={resetGame}
+              className="reset-btn"
+            >
+              Reset Game
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
