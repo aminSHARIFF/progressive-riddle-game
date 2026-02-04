@@ -1,8 +1,6 @@
 import React from 'react'
 
-const ScoreBoard = ({ score, currentLevel, totalLevels, hints, recoveryAvailable, triesLeft }) => {
-  const progressPercentage = (currentLevel / totalLevels) * 100
-
+const ScoreBoard = ({ score, currentLevel, totalLevels, hints, recoveryAvailable }) => {
   return (
     <div className="score-board">
       <div className="score-info">
@@ -14,16 +12,8 @@ const ScoreBoard = ({ score, currentLevel, totalLevels, hints, recoveryAvailable
           <span className="score-label">Level:</span>
           <span className="score-value">{currentLevel}/{totalLevels}</span>
         </div>
-        <div className="score-item">
-          <span className="score-label">Tries Left:</span>
-          <span className={`score-value ${triesLeft === 1 ? 'warning' : ''}`}>
-            {triesLeft}
-          </span>
-        </div>
       </div>
-      
-      
-      
+
       <div className="resources">
         <div className="resource-item">
           <span className="resource-label">Hints:</span>

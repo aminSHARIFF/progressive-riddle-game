@@ -9,7 +9,7 @@ export const riddles = [
   {
     id: 2,
     level: 2,
-    riddle: "The more you take, the more you leave behind. What am I?",
+    riddle: "The more you walk, the more you leave behind. What am I?",
     answer: "footsteps",
     hint: "Consider what happens when you walk."
   },
@@ -34,6 +34,12 @@ export const riddles = [
     answer: "coin",
     hint: "Check your pocket."
   },
+  {
+    id: 6,
+    level: 6,
+    riddle: "I'm found in socks, scarves, and mittens; I'm found in the paws of playful kittens. What am I?",
+    answer: "yarn",
+    hint: "Think about knitting materials."
+  },
   
-
-]
+];

@@ -9,8 +9,8 @@ function App() {
   const [currentLevel, setCurrentLevel] = useState(1)
   const [score, setScore] = useState(100)
   const [gameStatus, setGameStatus] = useState('playing')
-  const [hints, setHints] = useState(1) 
-  const [recoveryAvailable, setRecoveryAvailable] = useState(true) 
+  const [hints, setHints] = useState(0) 
+  const [recoveryAvailable, setRecoveryAvailable] = useState(false) 
   const [userAnswer, setUserAnswer] = useState('')
   const [feedback, setFeedback] = useState('')
   const [showHint, setShowHint] = useState(false)
@@ -27,8 +27,9 @@ function App() {
   }, [score, currentLevel])
 
   useEffect(() => {
-    // Reset tries when moving to next level
+    
     setTriesLeft(3)
+    setShowHint(false) 
   }, [currentLevel])
 
   const handleAnswerSubmit = () => {
@@ -41,64 +42,63 @@ function App() {
     const userAnswerLower = userAnswer.toLowerCase().trim()
 
     if (userAnswerLower === correctAnswer) {
-      setFeedback('Correct! Well done!')
+      setFeedback('✅ Correct! +20 points!')
       setScore(prev => prev + 20)
       
-     
+      
       setHints(prev => prev + 1)
       
       
-      if (currentLevel % 3 === 0) {
+      if ((currentLevel) % 3 === 0) { 
         setRecoveryAvailable(true)
       }
       
       setTimeout(() => {
-        setCurrentLevel(prev => prev + 1)
-        setUserAnswer('')
-        setFeedback('')
-        setShowHint(false)
+        if (currentLevel === riddles.length) {
+          setGameStatus('won')
+        } else {
+          setCurrentLevel(prev => prev + 1)
+          setUserAnswer('')
+          setFeedback('')
+          setShowHint(false)
+        }
       }, 1500)
     } else {
-      
+      /
       const newTriesLeft = triesLeft - 1
       setTriesLeft(newTriesLeft)
       
       if (newTriesLeft <= 0) {
         
-        setGameStatus('lost')
-        setFeedback('Game Over! You used all 3 tries!')
+        setTimeout(() => {
+          setGameStatus('lost')
+          setFeedback('Game Over! You used all 3 tries!')
+        }, 500)
       } else {
         setScore(prev => Math.max(0, prev - 10))
-        setFeedback(`Incorrect! ${newTriesLeft} ${newTriesLeft === 1 ? 'try' : 'tries'} remaining.`)
+        setFeedback(`❌ Incorrect! ${newTriesLeft} ${newTriesLeft === 1 ? 'try' : 'tries'} left.`)
       }
     }
   }
 
   const handleHint = () => {
-    console.log('Hint button clicked, available hints:', hints)
     if (hints > 0) {
       setShowHint(true)
       setHints(prev => prev - 1)
-      setFeedback('Hint revealed! Check above the answer box.')
+      setFeedback('💡 Hint revealed! Check above.')
     } else {
       setFeedback('No hints available! Answer correctly to earn hints.')
     }
   }
 
   const handleRecovery = () => {
-    console.log('Recovery button clicked, available:', recoveryAvailable)
     if (recoveryAvailable) {
       setScore(prev => prev + 30)
       setRecoveryAvailable(false)
-      setFeedback('Recovery used! +30 points!')
-      
-      
-      if (triesLeft <= 1) {
-        setTriesLeft(3)
-        setFeedback('Recovery used! +30 points and tries reset to 3!')
-      }
+      setTriesLeft(3) 
+      setFeedback('🔄 Recovery used! +30 points & tries reset to 3!')
     } else {
-      setFeedback('No recovery available! Complete every 3rd level to earn recovery.')
+      setFeedback('Complete every 3rd level to earn recovery!')
     }
   }
 
@@ -106,8 +106,8 @@ function App() {
     setCurrentLevel(1)
     setScore(100)
     setGameStatus('playing')
-    setHints(1) 
-    setRecoveryAvailable(true) 
+    setHints(0)
+    setRecoveryAvailable(false)
     setUserAnswer('')
     setFeedback('')
     setShowHint(false)
@@ -118,11 +118,11 @@ function App() {
     return (
       <div className="game-container">
         <div className="game-over">
-          <h2>Game Over! ⏰</h2>
-          <p>You used all 3 attempts!</p>
+          <h2>💀 Game Over!</h2>
+          <p>You used all 3 attempts on Level {currentLevel}!</p>
           <p>Final Score: {score}</p>
           <button className="reset-btn" onClick={handleReset}>
-            Play Again
+             Play Again
           </button>
         </div>
       </div>
@@ -133,11 +133,11 @@ function App() {
     return (
       <div className="game-container">
         <div className="game-won">
-          <h2>Congratulations! 🎉</h2>
-          <p>You solved all riddles!</p>
+          <h2> Congratulations!</h2>
+          <p>You solved all {riddles.length} riddles!</p>
           <p>Final Score: {score}</p>
           <button className="reset-btn" onClick={handleReset}>
-            Play Again
+             Play Again
           </button>
         </div>
       </div>

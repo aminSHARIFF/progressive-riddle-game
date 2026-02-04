@@ -7,7 +7,6 @@ const GameBoard = ({ riddle, userAnswer, setUserAnswer, feedback, showHint, trie
     }
   }
 
-  
   const triesIndicators = Array.from({ length: 3 }, (_, index) => (
     <span 
       key={index}
@@ -21,7 +20,7 @@ const GameBoard = ({ riddle, userAnswer, setUserAnswer, feedback, showHint, trie
   return (
     <div className="game-board">
       <div className="riddle-card">
-        
+        <div className="level-badge">Level {riddle.level}</div>
         
         <div className="riddle-text">
           <p>{riddle.riddle}</p>
@@ -29,7 +28,7 @@ const GameBoard = ({ riddle, userAnswer, setUserAnswer, feedback, showHint, trie
         
         {showHint && (
           <div className="hint-container">
-            <span className="hint-label">💡 Hint:</span>
+            <span className="hint-label"> Hint:</span>
             <p className="hint-text">{riddle.hint}</p>
           </div>
         )}
@@ -57,14 +56,6 @@ const GameBoard = ({ riddle, userAnswer, setUserAnswer, feedback, showHint, trie
             {feedback}
           </div>
         )}
-        
-        <div className="rules">
-          <p className="rule-item">✓ Correct answer: +20 points</p>
-          <p className="rule-item">✗ Wrong answer: -10 points</p>
-          <p className="rule-item">💡 Correct answers grant hints</p>
-          <p className="rule-item">🔄 Every 3rd level grants recovery</p>
-          <p className="rule-item">⚠️ Only 3 tries per riddle!</p>
-        </div>
       </div>
     </div>
   )
