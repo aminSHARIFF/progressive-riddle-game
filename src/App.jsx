@@ -7,34 +7,30 @@ import { riddles } from './data/riddles'
 
 function App() {
   const [currentLevel, setCurrentLevel] = useState(1)
-  const [score, setScore] = useState(100)
+  const [score, setScore] = useState(0)
   const [gameStatus, setGameStatus] = useState('playing')
-  const [hints, setHints] = useState(0) 
-  const [recoveryAvailable, setRecoveryAvailable] = useState(false) 
+  const [hints, setHints] = useState(1)
+  const [recoveryAvailable, setRecoveryAvailable] = useState(true)
   const [userAnswer, setUserAnswer] = useState('')
   const [feedback, setFeedback] = useState('')
   const [showHint, setShowHint] = useState(false)
   const [triesLeft, setTriesLeft] = useState(3)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const currentRiddle = riddles.find(r => r.level === currentLevel)
 
   useEffect(() => {
-    if (score <= 0) {
-      setGameStatus('lost')
-    } else if (currentLevel > riddles.length) {
-      setGameStatus('won')
-    }
-  }, [score, currentLevel])
-
-  useEffect(() => {
-    
     setTriesLeft(3)
-    setShowHint(false) 
   }, [currentLevel])
 
   const handleAnswerSubmit = () => {
+    if (isSubmitting) return
+    if (gameStatus !== 'playing') return
+    setIsSubmitting(true)
+
     if (!userAnswer.trim()) {
       setFeedback('Please enter an answer!')
+      setIsSubmitting(false)
       return
     }
 
@@ -42,42 +38,43 @@ function App() {
     const userAnswerLower = userAnswer.toLowerCase().trim()
 
     if (userAnswerLower === correctAnswer) {
-      setFeedback('✅ Correct! +20 points!')
+      setFeedback('Correct! Well done!')
       setScore(prev => prev + 20)
-      
-      
       setHints(prev => prev + 1)
-      
-      
-      if ((currentLevel) % 3 === 0) { 
+
+      if (currentLevel % 3 === 0) {
         setRecoveryAvailable(true)
       }
-      
-      setTimeout(() => {
-        if (currentLevel === riddles.length) {
+
+      if (currentLevel === riddles.length) {
+        setTimeout(() => {
           setGameStatus('won')
-        } else {
-          setCurrentLevel(prev => prev + 1)
-          setUserAnswer('')
-          setFeedback('')
-          setShowHint(false)
-        }
-      }, 1500)
+          setIsSubmitting(false)
+        }, 1000)
+        return
+      }
+
+      setTimeout(() => {
+        setCurrentLevel(prev => prev + 1)
+        setUserAnswer('')
+        setFeedback('')
+        setShowHint(false)
+        setIsSubmitting(false)
+      }, 1000)
+
     } else {
-      /
       const newTriesLeft = triesLeft - 1
       setTriesLeft(newTriesLeft)
-      
+
       if (newTriesLeft <= 0) {
-        
-        setTimeout(() => {
-          setGameStatus('lost')
-          setFeedback('Game Over! You used all 3 tries!')
-        }, 500)
+        setGameStatus('lost')
+        setFeedback('Game Over! You used all 3 tries!')
       } else {
         setScore(prev => Math.max(0, prev - 10))
-        setFeedback(`❌ Incorrect! ${newTriesLeft} ${newTriesLeft === 1 ? 'try' : 'tries'} left.`)
+        setFeedback(`Incorrect! ${newTriesLeft} ${newTriesLeft === 1 ? 'try' : 'tries'} remaining.`)
       }
+
+      setIsSubmitting(false)
     }
   }
 
@@ -85,45 +82,38 @@ function App() {
     if (hints > 0) {
       setShowHint(true)
       setHints(prev => prev - 1)
-      setFeedback('💡 Hint revealed! Check above.')
-    } else {
-      setFeedback('No hints available! Answer correctly to earn hints.')
     }
   }
 
   const handleRecovery = () => {
-    if (recoveryAvailable) {
-      setScore(prev => prev + 30)
-      setRecoveryAvailable(false)
-      setTriesLeft(3) 
-      setFeedback('🔄 Recovery used! +30 points & tries reset to 3!')
-    } else {
-      setFeedback('Complete every 3rd level to earn recovery!')
+    if (!recoveryAvailable) return
+    setRecoveryAvailable(false)
+    setScore(prev => prev + 30)
+    if (triesLeft <= 1) {
+      setTriesLeft(3)
     }
   }
 
   const handleReset = () => {
     setCurrentLevel(1)
-    setScore(100)
+    setScore(0)
     setGameStatus('playing')
-    setHints(0)
-    setRecoveryAvailable(false)
+    setHints(1)
+    setRecoveryAvailable(true)
     setUserAnswer('')
     setFeedback('')
     setShowHint(false)
     setTriesLeft(3)
+    setIsSubmitting(false)
   }
 
   if (gameStatus === 'lost') {
     return (
       <div className="game-container">
         <div className="game-over">
-          <h2>💀 Game Over!</h2>
-          <p>You used all 3 attempts on Level {currentLevel}!</p>
+          <h2>Game Over</h2>
           <p>Final Score: {score}</p>
-          <button className="reset-btn" onClick={handleReset}>
-             Play Again
-          </button>
+          <button onClick={handleReset}>Play Again</button>
         </div>
       </div>
     )
@@ -133,12 +123,10 @@ function App() {
     return (
       <div className="game-container">
         <div className="game-won">
-          <h2> Congratulations!</h2>
-          <p>You solved all {riddles.length} riddles!</p>
+          <h2>Congratulations</h2>
+          <p>You solved all riddles!</p>
           <p>Final Score: {score}</p>
-          <button className="reset-btn" onClick={handleReset}>
-             Play Again
-          </button>
+          <button onClick={handleReset}>Play Again</button>
         </div>
       </div>
     )
@@ -147,14 +135,13 @@ function App() {
   return (
     <div className="game-container">
       <ScoreBoard 
-        score={score} 
-        currentLevel={currentLevel} 
+        score={score}
+        currentLevel={currentLevel}
         totalLevels={riddles.length}
         hints={hints}
         recoveryAvailable={recoveryAvailable}
-        triesLeft={triesLeft}
       />
-      
+
       <GameBoard 
         riddle={currentRiddle}
         userAnswer={userAnswer}
@@ -164,7 +151,7 @@ function App() {
         triesLeft={triesLeft}
         onSubmit={handleAnswerSubmit}
       />
-      
+
       <GameControls 
         onHint={handleHint}
         onRecovery={handleRecovery}
