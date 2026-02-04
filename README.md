@@ -1,16 +1,42 @@
-# React + Vite
+Progressive Riddle Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Progressive Riddle Game is a web-based application built with React. It allows users to solve a series of riddles step by step. Each riddle must be solved to move to the next level. The game provides a limited number of attempts for each riddle and includes a hint system to help the player.
 
-Currently, two official plugins are available:
+Features
+	•	Progressive riddle levels
+	•	Three attempts per riddle
+	•	Hint system
+	•	Score tracking
+	•	Reset game option
+	•	Progress indicator
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+Technologies Used
+	•	React
+	•	JavaScript
+	•	HTML
+	•	CSS
+How to Run the Project
+	1.	Clone the repository:
+git clone https://github.com/aminSHARIFF/progressive-riddle-game.git
+	2.	Navigate to the project folder:
+cd progressive-riddle-game
+	3.	Install dependencies:
+npm install
+	4.	Start the development server:
+npm run dev
+	5.	Open the project in your browser:
+http://localhost:5173
+How to Play
+	•	Read the riddle shown on the screen.
+	•	Type your answer in the input field.
+	•	Click the Check Answer button to submit.
+	•	You have three tries for each riddle.
+	•	Use the hint button if available.
+	•	Complete all riddles to finish the game.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+Author
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Amin Shariff
+GitHub: https://github.com/aminSHARIFF
